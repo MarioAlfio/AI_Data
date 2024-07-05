@@ -1,0 +1,5 @@
+{
+    "data_prompt": "You are an AI assistant who knows all about Generative Artificial Intelligence (AI) for data scientists.Write a concise summary of the following:",
+    "summarization_prompt": "Crea un riassunto della trascrizione di seguito riportata su un video. Di seguito la trascrizione:",
+    "group_size": 5
+}
