@@ -32,10 +32,6 @@ def rabbithole_instantiates_parsers(file_handlers: dict, cat) -> dict:
 
 chaptersList = [
     {
-        "timestamp": 0,
-        "title": "Introduzione"
-    },
-    {
         "timestamp": 60,
         "title": "Rappresentazioni: diagramma a torta, a barre, istogramma, grafico"
     },
@@ -96,16 +92,17 @@ def before_rabbithole_stores_documents(docs, cat):
     print(n_summaries)
     print(group_size)
 
+    if n_summaries==0:
+        n_summaries = 1
+
     # make summaries of groups of docs
-    for n, i in enumerate(range(0, len(docs), group_size)):
-        if n_summaries==0:
-            n_summaries = 1
-            # Notify the admin of the progress
-            progress = (n * 100) // n_summaries
-            print(progress)
-            message = f"{progress}% of summarization"
-            cat.send_ws_message(message, msg_type="notification")
-            log(message, "INFO")
+    for n, i in enumerate(range(0, len(docs), group_size)):    
+        # Notify the admin of the progress
+        progress = (n * 100) // n_summaries
+        print(progress)
+        message = f"{progress}% of summarization"
+        cat.send_ws_message(message, msg_type="notification")
+        log(message, "INFO")
 
         # Get the text from groups of docs and join to string
         group = docs[i: i + group_size]
@@ -122,17 +119,31 @@ def before_rabbithole_stores_documents(docs, cat):
 
         # mi creo la stringa 
         chapters="\n".join("|".join((str(chapter["timestamp"]),chapter["title"])) for chapter in chaptersList)
+        print(chapters)
         # 0 | Come funziona useSTate
         # 123 | Come funziona ....
-        prompt = f"""Questa è una lista di capitoli di un video: {chapters}.\n\nOgni capitolo della lista è formattato 
-        in questo modo: seconds | Titolo\n\nRispondi dicendo quale di questi capitoli è relativo a questa parte di testo:{summary}. 
-        Nella risposta ricopia solo il capitolo che hai scelto.
+        prompt = f"""
+        Questa è una lista di capitoli di un video educativo sulla statistica:
+
+        {chapters}
+
+        Ogni capitolo della lista è formattato in questo modo: timestamp | Titolo
+
+        Questo è tutto il testo del video: {text_to_summarize}
+
+        Dato il seguente riassunto di tutto il video. Ritorna la lista dei capitoli tutti i capitoli tranne 'Introduzione' e 'Il lieto fine' hanno rilevanza alta.
+
+        Riassunto del testo:
+        {summary}
+
+        Formato della risposta:
+        timestamp | Titolo | Rilevanza
         """
 
         res = cat.llm(prompt)
 
         # risultato di che capitolo capisce di inserire
-        summary.metadata["chapter"] = res
+        summary.metadata["chapters"] = res
         print(res)
 
         # add summary to list of all summaries
