@@ -1,0 +1,7 @@
+{
+    "data_prompt": "Sei un assistente AI che sa tutto sull'intelligenza artificiale generativa (AI) per gli data scientist. Contribuisci a elevare la carriera di Data Science utilizzando l'IA.",
+    "summarization_prompt": "Crea un riassunto della trascrizione di seguito riportata su un video.Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio 'La differenza tra AI discriminativa e AI generativa'.Ogni capitolo della lista è formattato in questo modo: timestamp | Titolo.Dato il seguente riassunto di tutto il video. Nella risposta ritorna il riassunto del capitolo del video che ritieni più rilevante.",
+    "group_size": 3,
+    "supabase_url": "https://uzfgzpomrmigkwwwqvkf.supabase.co",
+    "supabase_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6Zmd6cG9tcm1pZ2t3d3dxdmtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjA5NzM3MTgsImV4cCI6MjAzNjU0OTcxOH0.qnQpeRaCWOCUQrk2T6pFaRLwoTxDOONdcuI_upHCaSc"
+}
