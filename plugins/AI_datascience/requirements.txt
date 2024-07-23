@@ -1,3 +1,5 @@
 youtube-transcript-api
 pytube
 pandas
+supabase
+python-dotenv

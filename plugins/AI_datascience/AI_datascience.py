@@ -4,11 +4,12 @@ from langchain.docstore.document import Document
 from cat.log import log
 from enum import Enum
 import json
-
+from supabase import create_client, Client
 from langchain.document_loaders.parsers.language.language_parser import LanguageParser
 from langchain.document_loaders.parsers.msword import MsWordParser
-
+import os
 from .parsers import YoutubeParser, TableParser, JSONParser
+
 
 
 @hook
@@ -17,6 +18,7 @@ def rabbithole_instantiates_parsers(file_handlers: dict, cat) -> dict:
     new_handlers = {
         "application/binary": YoutubeParser(),
         "video/mp4": YoutubeParser(),
+        "text/html": YoutubeParser(),
         "text/csv": TableParser(),
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": TableParser(),
         "text/x-python": LanguageParser(language="python"),
@@ -28,40 +30,6 @@ def rabbithole_instantiates_parsers(file_handlers: dict, cat) -> dict:
     }
     file_handlers = file_handlers | new_handlers
     return file_handlers
-
-
-chaptersList = [
-    {
-        "timestamp": 60,
-        "title": "Rappresentazioni: diagramma a torta, a barre, istogramma, grafico"
-    },
-    {
-        "timestamp": 90,
-        "title": "Misure di tendenza: media, moda e mediana"
-    },
-    {
-        "timestamp": 236,
-         "title": "La gaussiana o normale"
-    },
-    {
-        "timestamp": 270,
-         "title": "Misure di dispersione: range, intervallo interquartile, deviazione standard o scarto quadratico medio"
-    },
-    {
-        "timestamp": 440,
-         "title": "Come fare la regressione"
-    },
-    {
-        "timestamp": 472,
-         "title": "L'indice di correlazione"
-    },
-    {
-        "timestamp": 603,
-         "title": "Il lieto fine"
-    },
-
-]
-
 
 @hook
 def before_rabbithole_stores_documents(docs, cat):
@@ -114,37 +82,28 @@ def before_rabbithole_stores_documents(docs, cat):
         summary = Document(page_content=summary)
         summary.metadata["is_summary"] = True
         
-        print(text_to_summarize)
         print(summary)
 
-        # mi creo la stringa 
-        chapters="\n".join("|".join((str(chapter["timestamp"]),chapter["title"])) for chapter in chaptersList)
-        print(chapters)
-        # 0 | Come funziona useSTate
-        # 123 | Come funziona ....
-        prompt = f"""
-        Questa è una lista di capitoli di un video educativo sulla statistica:
+        # if exist video_id fai questo else solo riassunto normale del testo
 
-        {chapters}
+        if "video_id" in docs[0].metadata:
+            video_id = docs[0].metadata["video_id"]
+            print(video_id)
 
-        Ogni capitolo della lista è formattato in questo modo: timestamp | Titolo
+            supabase_url: str = settings['supabase_url']
+            supabase_key: str = settings['supabase_key']
+            supabase: Client = create_client(supabase_url, supabase_key)
 
-        Questo è tutto il testo del video: {text_to_summarize}
+            print("Supabase URL:", supabase_url)
+            print("Supabase Key:", supabase_key)
 
-        Dato il seguente riassunto di tutto il video. Ritorna la lista dei capitoli tutti i capitoli tranne 'Introduzione' e 'Il lieto fine' hanno rilevanza alta.
+            print(f"Document metadata: {docs[0].metadata}")
 
-        Riassunto del testo:
-        {summary}
-
-        Formato della risposta:
-        timestamp | Titolo | Rilevanza
-        """
-
-        res = cat.llm(prompt)
-
-        # risultato di che capitolo capisce di inserire
-        summary.metadata["chapters"] = res
-        print(res)
+            chapter = get_chapter(video_id, summary, cat, supabase)
+            summary.metadata["chapter"] = chapter
+            print(chapter)
+        else:
+            print("No video_id found, proceeding with normal summarization.")
 
         # add summary to list of all summaries
         all_summaries.append(summary)
@@ -152,6 +111,53 @@ def before_rabbithole_stores_documents(docs, cat):
     docs.extend(all_summaries)
 
     return docs
+
+def get_chapter(video_id,summary,cat,supabase):
+
+    print("query")
+    print(video_id)
+    
+    #try:
+    #    response = supabase.table('videos').select("*").execute()
+    #    print("Risposta della query:", response)
+        
+        # Verifica se ci sono dati nella risposta
+    #    if response.data:
+    #        print("Dati trovati:", response.data)
+    #    else:
+    #        print("Nessun dato trovato")
+    #except Exception as e:
+    #    print("Errore durante l'esecuzione della query:", e)
+    
+    response = supabase.table('videos').select("*").eq("video_id",video_id).neq("title","Finale").execute()
+    print(response)
+
+    data = response.data
+    print(data)
+
+    chapters="\n".join("|".join((str(chapter["timestamp"]),chapter["title"])) for chapter in data)
+
+    print("risposta query")
+    print(chapters)
+    
+    prompt = f"""
+        Questa è una lista di capitoli di un video educativo su temi riguardati la data scientist con AI, per esempio 'La differenza tra AI discriminativa e AI generativa':
+
+        {chapters}
+
+        Ogni capitolo della lista è formattato in questo modo: timestamp | Titolo
+
+        Dato il seguente riassunto del video, ritorna il capitolo corretto abbinato al riassunto.
+
+        Testo del riassunto:
+        {summary}
+
+        Nella risposta ricopia solo il capitolo che hai scelto.
+        """
+    print(prompt)
+    res = cat.llm(prompt)
+    
+    return res
 
 @hook
 def agent_prompt_prefix(prompt_prefix, cat):
@@ -190,3 +196,6 @@ def agent_fast_reply(fast_reply, cat):
         fast_reply["output"] = "Sorry, I'm afraid I don't know the answer"
 
     return fast_reply
+
+
+
