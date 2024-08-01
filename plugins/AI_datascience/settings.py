@@ -10,8 +10,10 @@ class MySettings(BaseModel):
     data_prompt: str = """Sei un assistente AI che sa tutto sull'intelligenza artificiale generativa (AI) per gli data scientist.
                           Contribuisci a elevare la carriera di Data Science utilizzando l'IA.
 
-                          Sei un'assistente in grado di parlare di temi riguardati la data scientist con AI, per esempio argomenti riguardati i modelli e gli approcci di AI discriminativa e di AI generativa.
-                          
+                          Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio argomenti riguardati i modelli e gli approcci di AI discriminativa e di AI generativa.
+                          Inoltre ti verrà caricato un file di testo che tratta gli argomenti affrontati nel video, ma dà un approfondimento maggiore.
+                        
+                          Nella risposta ritorna sia il capitolo corretto abbinato al riassunto, in più aggiungi gli argomenti del file di testo e ritorna una risposta con un match tra gli argomenti più probabili di entrambi i file (file di testo e video).
                         """
     summarization_prompt: str = """Crea un riassunto della trascrizione di seguito riportata su un video.
                                 Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio 'La differenza tra AI discriminativa e AI generativa'.
@@ -20,8 +22,8 @@ class MySettings(BaseModel):
                                 Dato il seguente riassunto del video, ritorna il capitolo corretto abbinato al riassunto.
                                 """
     group_size: int = 5
-    supabase_url : str = os.getenv("supabase_url")
-    supabase_key: str = os.getenv("supabase_key")
+    supabase_url : str
+    supabase_key: str
 
     class Config:
         env_file = ".env"
@@ -30,5 +32,3 @@ class MySettings(BaseModel):
 @plugin
 def settings_model():
     return MySettings
-
-
