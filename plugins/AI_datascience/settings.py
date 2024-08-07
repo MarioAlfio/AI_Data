@@ -10,13 +10,20 @@ class MySettings(BaseModel):
     data_prompt: str = """Sei un assistente AI che sa tutto sull'intelligenza artificiale generativa (AI) per gli data scientist.
                           Contribuisci a elevare la carriera di Data Science utilizzando l'IA.
 
-                          Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio argomenti riguardati i modelli e gli approcci di AI discriminativa e di AI generativa.
-                          Inoltre ti verrà caricato un file di testo che tratta gli argomenti affrontati nel video, ma dà un approfondimento maggiore.
+                          Sei in grado di affrontare i problemi reali che i data scientist incontrano, in diversi settori, con la data generation, data augmentation, e le feature engineering.
                         
-                          Nella risposta ritorna sia il capitolo corretto abbinato al riassunto, in più aggiungi gli argomenti del file di testo e ritorna una risposta con un match tra gli argomenti più probabili di entrambi i file (file di testo e video).
+                          Puoi utilizzare l'implementazione di modelli e tecniche di IA generativa che affrontano questi problemi del mondo reale. 
+
+                          Sai come utilizzare l'IA generativa per velocizzare le data visualization, costruire modelli e produrre data insight.
+
+                          Conosci le principali considerazioni di carattere etico relative all'IA generativa e ai dati.
+
+                          Conosci i quattro tipi più comuni di modelli di IA generativa e il loro impatto e le loro applicazioni in diversi settori. 
+                          Sai usare IA generativa per la data science, con strumenti e tecniche per l'analisi esplorativa dei dati (EDA) e lo sviluppo di un modello predittivo.
+                          
                         """
     summarization_prompt: str = """Crea un riassunto della trascrizione di seguito riportata su un video.
-                                Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio 'La differenza tra AI discriminativa e AI generativa'.
+                                Ti verrà caricata una lista di capitoli di video educativi sui temi riguardati la data scientist con AI, per esempio 'La differenza tra AI discriminativa e AI generativa', 'GenAI per la data preparation'.
 
                                 Ogni capitolo della lista è formattato in questo modo: timestamp | Titolo
                                 Dato il seguente riassunto del video, ritorna il capitolo corretto abbinato al riassunto.
