@@ -1,4 +1,4 @@
-C![1_nmxguX3eHO--FcYF90e4Ww](https://github.com/user-attachments/assets/c4cc5957-6a7c-46b4-a8d5-a776c9286ab3)
+![1_nmxguX3eHO--FcYF90e4Ww](https://github.com/user-attachments/assets/c4cc5957-6a7c-46b4-a8d5-a776c9286ab3)
 
 ## Data Analyst AI Agent
 
