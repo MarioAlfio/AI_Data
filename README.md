@@ -6,7 +6,7 @@ Ho creato un Agente di AI che mi supoorta nel mio lavoro di Data Analyst. Carica
 
 1. Riassumere qualsiasi tipo di file
 2. Trascrivere video
-3: Fornirmi una risposta esaustiva che mi aiuta a chiarire dubbi.
+3. Fornirmi una risposta esaustiva che mi aiuta a chiarire dubbi.
 
 Tutto questo grazie all'utilizzo del framework Cheshire Cat, fantastico vi invito a provarlo! (https://github.com/cheshire-cat-ai/core)
 
